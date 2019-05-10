@@ -14,6 +14,9 @@
 			progressColor: 'purple'
 		});
 		wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
+		wavesurfer.on('ready', function () {
+			wavesurfer.play();
+		});
 	</script>
 
 	<p>...After the script.</p>
