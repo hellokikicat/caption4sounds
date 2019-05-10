@@ -3,20 +3,32 @@
 
 <body>
 	<script src="https://unpkg.com/wavesurfer.js"></script>
+	<script src="https://wavesurfer-js.org/plugin/wavesurfer.spectrogram.js"></script>
+
 	<p>Before the script...</p>
 	<div id="waveform"></div>
-
+  	<div id="wave-spectrogram"></div>
  	<script>
 		// alert( 'Hello, world!' );
 		var wavesurfer = WaveSurfer.create({
 			container: '#waveform',
 			waveColor: 'violet',
 			progressColor: 'purple'
+			
+			 plugins: [
+				WaveSurfer.spectrogram.create{
+				    wavesurfer: wavesurfer,
+				    container: "#wave-spectrogram",
+				    labels: true
+				})
+			    ]
 		});
 		wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
 		wavesurfer.on('ready', function () {
 			wavesurfer.play();
 		});
+		
+		
 	</script>
 
 	<p>...After the script.</p>
