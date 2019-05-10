@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+
+<body>
+	<script src="https://unpkg.com/wavesurfer.js"></script>
+	<p>Before the script...</p>
+	<div id="waveform"></div>
+
+ 	<script>
+		// alert( 'Hello, world!' );
+		var wavesurfer = WaveSurfer.create({
+			container: '#waveform',
+			waveColor: 'violet',
+			progressColor: 'purple'
+		});
+		wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.wav');
+	</script>
+
+	<p>...After the script.</p>
+
+</body>
+
+</html>
