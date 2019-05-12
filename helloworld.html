@@ -24,25 +24,36 @@
 	
  	<script>
 		// alert( 'Hello, world!' );
-		var wavesurfer = WaveSurfer.create({
-			container: '#waveform',
-			waveColor: 'violet',
-			progressColor: 'purple',
-			
-			 plugins: [
-				WaveSurfer.spectrogram.create({
+		var wavesurfer = {};
+		document.addEventListener('DOMContentLoaded', function() {
+		wavesurfer = WaveSurfer.create({
+			container: document.querySelector('#waveform'),
+			plugins: [
+           			 WaveSurfer.cursor.create({
+               			 	showTime: true,
+                		 	opacity: 1,
+               				 customShowTimeStyle: {
+                   			 	'background-color': '#000',
+                   		   	 	color: '#fff',
+                   				 padding: '2px',
+                   			 	'font-size': '10px'
+             					    		}
+           						  });
+				 WaveSurfer.spectrogram.create({
 				    wavesurfer: wavesurfer,
 				    container: "#wave-spectrogram",
 				    labels: true
-				})
-			    ]
+								})
+       				 ]
+		
 		});
 		
 		
 		wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
 		wavesurfer.on('ready', function () {
 			wavesurfer.play();
-		var button = document.querySelector('[data-action="play"]')
+		var button = document.querySelector('[data-action="play"]');
+		button.addEventListener('click', wavesurfer.playPause.bind(wavesurfer));
 		});
 		
 		
