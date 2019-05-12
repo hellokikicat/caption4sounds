@@ -9,6 +9,15 @@
 	<p>Before the script...</p>
 	<div id="waveform"></div>
   	<div id="wave-spectrogram"></div>
+	<div class="col-sm-7">
+        	<button class="btn btn-primary" data-action="play">
+    	            <i class="glyphicon glyphicon-play"></i>
+                       Play /
+                    <i class="glyphicon glyphicon-pause"></i>
+                       Pause
+                 </button>
+        </div>
+	
  	<script>
 		// alert( 'Hello, world!' );
 		var wavesurfer = WaveSurfer.create({
@@ -24,6 +33,11 @@
 				})
 			    ]
 		});
+		
+		var button = document.querySelector('[data-action="play"]');
+
+    		button.addEventListener('click', wavesurfer.playPause.bind(wavesurfer))
+	  	
 		wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
 		wavesurfer.on('ready', function () {
 			wavesurfer.play();
