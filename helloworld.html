@@ -4,7 +4,7 @@
 <body>
 	<script src="https://unpkg.com/wavesurfer.js"></script>
 	<script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.js"></script>
-
+	<script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.cursor.js"></script>
 
 	<p>Before the script...</p>
 	<div id="waveform"></div>
@@ -38,7 +38,7 @@
                    				 padding: '2px',
                    			 	'font-size': '10px'
              					    		}
-           						  });
+           						  }),
 				 WaveSurfer.spectrogram.create({
 				    wavesurfer: wavesurfer,
 				    container: "#wave-spectrogram",
@@ -48,12 +48,11 @@
 		
 		});
 		
-		
-		wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
-		
 		var button = document.querySelector('[data-action="play"]');
 		button.addEventListener('click', wavesurfer.playPause.bind(wavesurfer));
 		});
+		
+		wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
 		
 		
 	</script>
