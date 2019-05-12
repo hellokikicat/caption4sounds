@@ -2,62 +2,62 @@
 <html>
 
 <body>
-	<script src="https://unpkg.com/wavesurfer.js"></script>
-	<script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.js"></script>
-	<script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.cursor.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.cursor.js"></script>
 
-	<p>Before the script...</p>
-	<div id="waveform"></div>
-  	<div id="wave-spectrogram"></div>
-	<div class="controls">
-        	<div class="row">
-                	<div class="col-sm-7">
-                        	<button class="btn btn-primary" data-action="play">
-                            		<i class="glyphicon glyphicon-play"></i>
-                            		Play /
-                            		<i class="glyphicon glyphicon-pause"></i>
-                           		 Pause
-                       		 </button>
-                    	</div>
-                </div>
-   	</div>
+    <p>Before the script...</p>
+    <div id="waveform"></div>
+    <div id="wave-spectrogram"></div>
+    <div class="controls">
+        <div class="row">
+            <div class="col-sm-7">
+                <button class="btn btn-primary" data-action="play">
+                    <i class="glyphicon glyphicon-play"></i>
+                        Play /
+                    <i class="glyphicon glyphicon-pause"></i>
+                        Pause
+                </button>
+            </div>
+        </div>
+    </div>
 	
- 	<script>
-		// alert( 'Hello, world!' );
-		var wavesurfer = {};
-		document.addEventListener('DOMContentLoaded', function() {
-		wavesurfer = WaveSurfer.create({
-			container: document.querySelector('#waveform'),
-			plugins: [
-           			 WaveSurfer.cursor.create({
-               			 	showTime: true,
-                		 	opacity: 1,
-               				 customShowTimeStyle: {
-                   			 	'background-color': '#000',
-                   		   	 	color: '#fff',
-                   				 padding: '2px',
-                   			 	'font-size': '10px'
-             					    		}
-           						  }),
-				 WaveSurfer.spectrogram.create({
-				    wavesurfer: wavesurfer,
-				    container: "#wave-spectrogram",
-				    labels: true
-								})
-       				 ]
-		
-		});
-		
-		var button = document.querySelector('[data-action="play"]');
-		button.addEventListener('click', wavesurfer.playPause.bind(wavesurfer));
-		});
-		
-		wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
-		
-		
-	</script>
+    <script>
+        // alert( 'Hello, world!' );
+        var wavesurfer = {};
+        document.addEventListener('DOMContentLoaded', function() {
+            wavesurfer = WaveSurfer.create({
+                container: document.querySelector('#waveform'),
+                plugins: [
+                         WaveSurfer.cursor.create({
+                                showTime: true,
+                                opacity: 1,
+                                 customShowTimeStyle: {
+                                    'background-color': '#000',
+                                    color: '#fff',
+                                     padding: '2px',
+                                    'font-size': '10px'
+                                                }
+                                      }),
+                     WaveSurfer.spectrogram.create({
+                        wavesurfer: wavesurfer,
+                        container: "#wave-spectrogram",
+                        labels: true
+                                    })
+                         ]
 
-	<p>...After the script.</p>
+                });
+
+            var button = document.querySelector('[data-action="play"]');
+            button.addEventListener('click', wavesurfer.playPause.bind(wavesurfer));
+
+            wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
+        });
+
+
+    </script>
+
+    <p>...After the script.</p>
 
 </body>
 
