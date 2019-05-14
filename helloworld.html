@@ -73,15 +73,15 @@
             var button = document.querySelector('[data-action="play"]');
             button.addEventListener('click', wavesurfer.playPause.bind(wavesurfer));
 	    
-	    wavesurfer.microphone.on('deviceReady', function(stream) {
-   	   console.log('Device ready!', stream);
-                 });
-	    wavesurfer.microphone.on('deviceError', function(code) {
-           console.warn('Device error: ' + code);
-           });
+// 	    wavesurfer.microphone.on('deviceReady', function(stream) {
+//    	   console.log('Device ready!', stream);
+//                  });
+// 	    wavesurfer.microphone.on('deviceError', function(code) {
+//            console.warn('Device error: ' + code);
+//            });
 
-	   // start the microphone
-            wavesurfer.microphone.start();
+// 	   // start the microphone
+//             wavesurfer.microphone.start();
 		// pause rendering
 	   //wavesurfer.microphone.pause();
 
