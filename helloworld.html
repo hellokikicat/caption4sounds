@@ -4,7 +4,8 @@
 <body>
     <script src="https://unpkg.com/wavesurfer.js"></script>
     <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.js"></script>
-    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.cursor.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.cursor.js"></script> 
+    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.microphone.js"></script>
 
     <p>Before the script...</p>
     <div id="waveform"></div>
@@ -46,14 +47,40 @@
                         wavesurfer: wavesurfer,
                         container: "#wave-spectrogram",
                         labels: true
-                                    })
+                                    }),
+			
+    			WaveSurfer.microphone.create()
+  
                          ]
 
                 });
 
             var button = document.querySelector('[data-action="play"]');
             button.addEventListener('click', wavesurfer.playPause.bind(wavesurfer));
+	    
+	    wavesurfer.microphone.on('deviceReady', function(stream) {
+   	   console.log('Device ready!', stream);
+                 });
+	    wavesurfer.microphone.on('deviceError', function(code) {
+           console.warn('Device error: ' + code);
+           });
 
+	   // start the microphone
+            wavesurfer.microphone.start();
+		// pause rendering
+	   //wavesurfer.microphone.pause();
+
+    	   // resume rendering
+	   //wavesurfer.microphone.play();
+
+   	   // stop visualization and disconnect microphone
+           //wavesurfer.microphone.stopDevice();
+
+     	   // same as stopDevice() but also clears the wavesurfer canvas
+ 	   //wavesurfer.microphone.stop();
+
+  	   // destroy the plugin
+	   //wavesurfer.microphone.destroy();
             wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
         });
 
