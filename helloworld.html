@@ -58,11 +58,11 @@
                                     'font-size': '10px'
                                                 }
                                       }),
-                     WaveSurfer.spectrogram.create({
-                        wavesurfer: wavesurfer,
-                        container: "#wave-spectrogram",
-                        labels: true
-                                    }),
+//                      WaveSurfer.spectrogram.create({
+//                         wavesurfer: wavesurfer,
+//                         container: "#wave-spectrogram",
+//                         labels: true
+//                                     }),
 			
     			WaveSurfer.microphone.create()
   
@@ -86,13 +86,13 @@
 	   wavesurfer.microphone.pause();
 
 //     	   resume rendering
-	   wavesurfer.microphone.play();
+// 	   wavesurfer.microphone.play();
 
 //    	   stop visualization and disconnect microphone
-           wavesurfer.microphone.stopDevice();
+//            wavesurfer.microphone.stopDevice();
 
 //      	   same as stopDevice() but also clears the wavesurfer canvas
- 	   wavesurfer.microphone.stop();
+//  	   wavesurfer.microphone.stop();
 
   	   // destroy the plugin
 	   //wavesurfer.microphone.destroy();
