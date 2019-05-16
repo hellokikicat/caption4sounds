@@ -73,26 +73,26 @@
             var button = document.querySelector('[data-action="play"]');
             button.addEventListener('click', wavesurfer.playPause.bind(wavesurfer));
 	    
-// 	    wavesurfer.microphone.on('deviceReady', function(stream) {
-//    	   console.log('Device ready!', stream);
-//                  });
-// 	    wavesurfer.microphone.on('deviceError', function(code) {
-//            console.warn('Device error: ' + code);
-//            });
+	    wavesurfer.microphone.on('deviceReady', function(stream) {
+   	   console.log('Device ready!', stream);
+                 });
+	    wavesurfer.microphone.on('deviceError', function(code) {
+           console.warn('Device error: ' + code);
+           });
 
-// 	   // start the microphone
-//             wavesurfer.microphone.start();
+	   // start the microphone
+            wavesurfer.microphone.start();
 		// pause rendering
-	   //wavesurfer.microphone.pause();
+	   wavesurfer.microphone.pause();
 
-    	   // resume rendering
-	   //wavesurfer.microphone.play();
+    	   resume rendering
+	   wavesurfer.microphone.play();
 
-   	   // stop visualization and disconnect microphone
-           //wavesurfer.microphone.stopDevice();
+   	   stop visualization and disconnect microphone
+           wavesurfer.microphone.stopDevice();
 
-     	   // same as stopDevice() but also clears the wavesurfer canvas
- 	   //wavesurfer.microphone.stop();
+     	   same as stopDevice() but also clears the wavesurfer canvas
+ 	   wavesurfer.microphone.stop();
 
   	   // destroy the plugin
 	   //wavesurfer.microphone.destroy();
