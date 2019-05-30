@@ -1,6 +1,7 @@
+import json
+import prediction_utils
 from fastapi import FastAPI
 from ytdl import yt_audio_dl
-import prediction_utils
 
 
 app = FastAPI()
@@ -32,4 +33,5 @@ def get_caption(video_id: str):
     labels = prediction_utils.prediction_label('./','class_labels_indices.csv','display_name',prediction)
     print('done')
 
+    # return json.dumps({"audio_filename": filename, "dl_status": 'finished', "results": labels})
     return {"audio_filename": filename, "dl_status": 'finished', "results": labels}

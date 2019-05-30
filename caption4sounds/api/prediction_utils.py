@@ -53,5 +53,6 @@ def model_prediction(pathname, modelname, block_10s, normsize, threshold):
 def prediction_label(pathname, labels_file, labels_col, preds,):
     df = pd.read_csv(Path(pathname)/ labels_file)
     series = df[labels_col]
-    labels = [(x, list(series[y])) for x, y in preds]
+    # labels = [(x, list(series[y])) for x, y in preds]
+    labels = {x: list(series[y]) for x, y in preds}
     return labels
