@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from ytdl import yt_audio_dl
+import prediction_utils
+
 
 app = FastAPI()
 
-# sess = load_vggish_ckpt()
+sess_ckpt = prediction_utils.load_checkpoint('vggish_model.ckpt')
 
 @app.get("/")
 def read_root():
@@ -17,11 +19,17 @@ def read_item(item_id: int, q: str = None):
 @app.get("/caption/{video_id}")
 def get_caption(video_id: str):
     filename, status = yt_audio_dl(video_id, 'temp_audio/')
-    wavefor = audio_load('temp_audio/', filename)
-    sess_ckpt = prediction_utils.load_checkpoint('vggish_model.ckpt')
+    print('loading audio file')
+    wave = prediction_utils.audio_load(filename)
+    print('starting vggish')
     vggish_features = prediction_utils.feature_extraction(wave,'vggish_pca_params.npz',sess_ckpt)
+    print('hopping')
+    print(vggish_features.shape)
     block_10s = prediction_utils.block(vggish_features,10,2)
-    prediction = prediction_utils.model_prediction('temp_audio/','baseline_model',block_10s,256.,0.2)
-    labels = prediction_utils.prediction_label('temp_audio/','class_labels_indices.csv','display_name',prediction)
+    print('final prediction')
+    prediction = prediction_utils.model_prediction('./','unbal_1M_batchnorm_model-stage01',block_10s,256.,0.2)
+    print('labeling')
+    labels = prediction_utils.prediction_label('./','class_labels_indices.csv','display_name',prediction)
+    print('done')
 
     return {"audio_filename": filename, "dl_status": 'finished', "results": labels}
