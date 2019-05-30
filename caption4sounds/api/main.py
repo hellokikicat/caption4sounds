@@ -21,9 +21,9 @@ def read_item(item_id: int, q: str = None):
 def get_caption(video_id: str):
     filename, status = yt_audio_dl(video_id, 'temp_audio/')
     print('loading audio file')
-    wave = prediction_utils.audio_load(filename)
+    wave, sr  = prediction_utils.audio_load(filename)
     print('starting vggish')
-    vggish_features = prediction_utils.feature_extraction(wave,'vggish_pca_params.npz',sess_ckpt)
+    vggish_features = prediction_utils.feature_extraction(wave, sr, 'vggish_pca_params.npz',sess_ckpt)
     print('hopping')
     print(vggish_features.shape)
     block_10s = prediction_utils.block(vggish_features,10,2)

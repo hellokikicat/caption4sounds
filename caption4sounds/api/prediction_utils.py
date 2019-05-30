@@ -12,7 +12,7 @@ import vggish_slim
 def audio_load(filename):
     song = AudioSegment.from_file(Path(filename))
     songwave = np.array(song.get_array_of_samples()).reshape(-1, song.channels)/ song.max_possible_amplitude
-    return songwave
+    return songwave,song.frame_rate
 
 def load_checkpoint(checkpointfile):
     tf.reset_default_graph()
@@ -22,8 +22,8 @@ def load_checkpoint(checkpointfile):
     vggish_slim.load_vggish_slim_checkpoint(sess, checkpointfile)
     return sess
 
-def feature_extraction(songwave, pca_params, session):
-    examples_batch = vggish_input.waveform_to_examples(songwave, vggish_params.SAMPLE_RATE)
+def feature_extraction(songwave, pca_params, session, sample_rate):
+    examples_batch = vggish_input.waveform_to_examples(songwave, sample_rate)
     pproc = vggish_postprocess.Postprocessor(str(pca_params))
     features_tensor = session.graph.get_tensor_by_name(vggish_params.INPUT_TENSOR_NAME)
     embedding_tensor = session.graph.get_tensor_by_name(vggish_params.OUTPUT_TENSOR_NAME)
