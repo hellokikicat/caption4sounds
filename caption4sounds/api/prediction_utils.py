@@ -34,7 +34,8 @@ def feature_extraction(songwave, pca_params, session, sample_rate):
 
 def block(vggish_features, window, hop):
     index_window = np.arange(window)
-    index_hop = np.arange(0,vggish_features.shape[0] - hop - (10 - vggish_features.shape[0]%window) - 1, hop)[:, np.newaxis]
+    # index_hop = np.arange(0,vggish_features.shape[0] - hop - (10 - vggish_features.shape[0]%window) - 1, hop)[:, np.newaxis]
+    index_hop = np.arange(0,vggish_features.shape[0] - window, hop)[:, np.newaxis]
     rolling_block = np.take(vggish_features,index_window + index_hop, axis=0)
     return rolling_block
 
