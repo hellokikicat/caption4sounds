@@ -23,7 +23,7 @@ def get_caption(video_id: str):
     print('loading audio file')
     wave, sr  = prediction_utils.audio_load(filename)
     print('starting vggish')
-    vggish_features = prediction_utils.feature_extraction(wave, sr, 'vggish_pca_params.npz',sess_ckpt)
+    vggish_features = prediction_utils.feature_extraction(wave, 'vggish_pca_params.npz',sess_ckpt, sr)
     print('hopping')
     print(vggish_features.shape)
     block_10s = prediction_utils.block(vggish_features,10,2)
