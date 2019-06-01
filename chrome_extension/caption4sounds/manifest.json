@@ -1,0 +1,30 @@
+{
+    "manifest_version": 2,
+    "name": "Caption 4 Sounds™",
+    "version": "0.1.0",
+    "description": "Watch YouTube™ videos with descriptional caption for various sounds",
+    "author": "Amber Ma",
+	"browser_action": {
+	  "default_icon": "waveform-icon.png",
+	  "default_title": "Caption 4 Sounds™"
+	},
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": false
+	},
+    "content_scripts": [
+        {
+            "matches": ["http://www.youtube.com/watch*", "https://www.youtube.com/watch*"],
+            "css": ["css/youtube-controls.css"],
+            "js": ["content-script.js"]
+        }
+    ],
+    "web_accessible_resources": [
+        "caption4sounds.js",
+        "font/*"
+    ],
+	"permissions": [
+        "http://127.0.0.1/*",
+        "http://3.15.60.80/*"
+    ]
+}
