@@ -1,0 +1,62 @@
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'youtube-controls';
+    src: url('../font/youtube-controls.svg?44017457#youtube-controls') format('svg');
+  }
+}
+*/
+ 
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "youtube-controls";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+     
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.icon {
+  color: rgb(238, 238, 238);
+  font-size: 15px;
+  line-height: 27px;
+  cursor: pointer;
+}
+
+.icon:hover { color: rgb(255, 255, 255); } 
+
+.icon-to-end:before { content: '\e800'; } /* '' */
+.icon-to-start:before { content: '\e801'; } /* '' */
+.icon-fast-fw:before { content: '\e802'; } /* '' */
+.icon-fast-bw:before { content: '\e803'; } /* '' */
+.icon-for-hotkeys-menu:before { content: '\e804'; 
+								font-size: 12px; 
+								margin-right: 2em; 
+								margin-left: 1em; 
+								transform: translateY(10%);
+} /* '' */
+								

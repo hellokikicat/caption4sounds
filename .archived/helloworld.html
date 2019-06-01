@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+
+<body>
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.cursor.js"></script> 
+    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.microphone.js"></script>
+
+    <p>Before the script...</p>
+    <div id="waveform"></div>
+    <div id="wave-spectrogram"></div>
+    <div class="controls">
+        <div class="row">
+            <div class="col-sm-7">
+                <button class="btn btn-primary" data-action="play">
+                    <i class="glyphicon glyphicon-play"></i>
+                        Play /
+                    <i class="glyphicon glyphicon-pause"></i>
+                        Pause
+                </button>
+            </div>
+        </div>
+    </div>
+   
+    <div class="controls1">
+    	<button id="micBtn" class="btn btn-primary" data-action="start">
+        	Microphone:
+                <i class="glyphicon glyphicon-play"></i>
+                   Start
+                   /
+                <i class="glyphicon glyphicon-stop"></i>
+                   Stop
+         </button>
+    </div>
+	
+	
+	
+	
+	
+    <script>
+        // alert( 'Hello, world!' );
+        var wavesurfer = {};
+        document.addEventListener('DOMContentLoaded', function() {
+            wavesurfer = WaveSurfer.create({
+                container: document.querySelector('#waveform'),
+		waveColor: 'violet',
+     		progressColor: 'purple',
+                plugins: [
+                         WaveSurfer.cursor.create({
+                                showTime: true,
+                                opacity: 1,
+                                 customShowTimeStyle: {
+                                    'background-color': '#000',
+                                    color: '#fff',
+				    
+                                     padding: '2px',
+                                    'font-size': '10px'
+                                                }
+                                      }),
+//                      WaveSurfer.spectrogram.create({
+//                         wavesurfer: wavesurfer,
+//                         container: "#wave-spectrogram",
+//                         labels: true
+//                                     }),
+			
+    			WaveSurfer.microphone.create()
+  
+                         ]
+
+                });
+
+            var button = document.querySelector('[data-action="play"]');
+            button.addEventListener('click', wavesurfer.playPause.bind(wavesurfer));
+	    
+	    wavesurfer.microphone.on('deviceReady', function(stream) {
+   	   console.log('Device ready!', stream);
+                 });
+	    wavesurfer.microphone.on('deviceError', function(code) {
+           console.warn('Device error: ' + code);
+           });
+
+	   // start the microphone
+            wavesurfer.microphone.start();
+		// pause rendering
+	   wavesurfer.microphone.pause();
+
+//     	   resume rendering
+// 	   wavesurfer.microphone.play();
+
+//    	   stop visualization and disconnect microphone
+//            wavesurfer.microphone.stopDevice();
+
+//      	   same as stopDevice() but also clears the wavesurfer canvas
+//  	   wavesurfer.microphone.stop();
+
+  	   // destroy the plugin
+	   //wavesurfer.microphone.destroy();
+            wavesurfer.load('Kevin_MacLeod_-_Canon_in_D_Major.mp3');
+        });
+
+
+    </script>
+
+    <p>...After the script.</p>
+
+</body>
+
+</html>
