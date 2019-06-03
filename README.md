@@ -26,5 +26,6 @@ To view installation detials, please take a look at the readme in the [chrome_ex
 Comparing to [Google's results from 2 year ago](https://arxiv.org/abs/1609.09430), my model trained with Focal Loss and additional pooling layers managed to make incremental preformance boost on the same evaluation test set from AudioSet.
 
 Google's orignal Mean Average Precision: 0.314
+
 My final Mean Average Precision: 0.340
 
