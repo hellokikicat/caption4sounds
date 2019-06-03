@@ -35,11 +35,6 @@ def get_caption(video_id: str):
     print(vggish_features.shape)
     block_10s = prediction_utils.block(vggish_features,10,2)
     
-
-    print('final prediction')
-    print(model_attention.summary())
-    print(model_attention.predict(block_10s/256.))
-
     prediction = prediction_utils.model_prediction(model_attention, block_10s,0.2)
     print('labeling')
     labels = prediction_utils.prediction_label('./','class_labels_indices.csv','display_name',prediction)

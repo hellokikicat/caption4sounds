@@ -4,6 +4,8 @@ vggish_model.ckpt
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
+__pycashe__*
 
 # C extensions
 *.so
