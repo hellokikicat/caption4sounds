@@ -12,6 +12,13 @@ import vggish.vggish_slim
 from pydub import AudioSegment
 from pathlib import Path
 
+import tensorflow.keras as keras
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import (Input, Dense, BatchNormalization, Dropout, Lambda,
+                          Activation, Concatenate)
+import tensorflow.keras.backend as K
+
+
 def audio_load(filename):
     """ Load audio file using pydub w/ ffmpeg and returns a numpy array with sample rate
     Requires FFMPEG to be installed on system
@@ -33,7 +40,7 @@ def load_checkpoint(checkpointfile):
     Returns:
         a TF session containing restored weights of vggish
     """
-    tf.reset_default_graph()
+    # tf.reset_default_graph()
     tf.Graph().as_default()
     sess = tf.Session()
     vggish.vggish_slim.define_vggish_slim(training=False)
@@ -76,12 +83,88 @@ def block(vggish_features, window, hop):
     rolling_block = np.take(vggish_features,index_window + index_hop, axis=0)
     return rolling_block
 
-def model_prediction(pathname, modelname, block_10s, normsize=256, threshold=0.2):
+def constrct_model(pathname, weights_name):
+    """ Model loading function for last layers, contains attention pooling
+    
+    Args:
+        pathname: folder name of saved weights
+        weights_name: file name of saved weights
+    Returns:
+        model loaded with saved weights, ready for prediction
+    """
+    def attention_pooling(inputs, **kwargs):
+        [out, att] = inputs
+
+        epsilon = 1e-7
+        att = K.clip(att, epsilon, 1. - epsilon)
+        normalized_att = att / K.sum(att, axis=1)[:, None, :]
+
+        return K.sum(out * normalized_att, axis=1)
+
+
+    def pooling_shape(input_shape):
+
+        if isinstance(input_shape, list):
+            (sample_num, time_steps, freq_bins) = input_shape[0]
+
+        else:
+            (sample_num, time_steps, freq_bins) = input_shape
+
+        return (sample_num, freq_bins)
+
+    time_steps = 10
+    freq_bins = 128
+    classes_num = 527
+
+    # Hyper parameters
+    hidden_units = 1024
+    drop_rate = 0.5
+    batch_size = 500
+
+    # Embedded layers
+    input_layer = Input(shape=(time_steps, freq_bins))
+
+    a1 = Dense(hidden_units)(input_layer)
+    a1 = BatchNormalization()(a1)
+    a1 = Activation('relu')(a1)
+    a1 = Dropout(drop_rate)(a1)
+
+    a2 = Dense(hidden_units)(a1)
+    a2 = BatchNormalization()(a2)
+    a2 = Activation('relu')(a2)
+    a2 = Dropout(drop_rate)(a2)
+
+    a3 = Dense(hidden_units)(a2)
+    a3 = BatchNormalization()(a3)
+    a3 = Activation('relu')(a3)
+    a3 = Dropout(drop_rate)(a3)
+
+    # Multi-level Attention Model
+    cla1 = Dense(classes_num, activation='sigmoid')(a2)
+    att1 = Dense(classes_num, activation='softmax')(a2)
+    out1 = Lambda(
+        attention_pooling, output_shape=pooling_shape)([cla1, att1])
+
+    cla2 = Dense(classes_num, activation='sigmoid')(a3)
+    att2 = Dense(classes_num, activation='softmax')(a3)
+    out2 = Lambda(
+        attention_pooling, output_shape=pooling_shape)([cla2, att2])
+
+    b1 = Concatenate(axis=-1)([out1, out2])
+    b1 = Dense(classes_num)(b1)
+    output_layer = Activation('sigmoid')(b1)
+
+    model_graph = Model(inputs=input_layer, outputs=output_layer)
+    model_graph.load_weights(pathname + weights_name)
+    return model_graph
+
+
+def model_prediction(model, block_10s, threshold=0.2):
     """ Forward pass of the second part of the layer, predicting probs for each label
 
     Args:
         pathname: path to folder of saved Keras model
-        modelname: name of saved Keras model
+        weights_name: name of saved Keras model wights
         block_10s: 3D numpy array from rolled and post processed vggish embeddings
         normsize: normalization of vggish embeddings
         threshold: probability threshold for predicting labels
@@ -89,8 +172,7 @@ def model_prediction(pathname, modelname, block_10s, normsize=256, threshold=0.2
         2D numpy array of shape ((window/hop) * num of seconds, num of labels) where
         each element is the probability of the corresponding label at corresponding time
     """
-    model = tf.keras.models.load_model(Path(pathname)/ modelname)
-    prediction = model.predict(block_10s/ normsize)
+    prediction = model.predict((np.float32(block_10s)-128.)/128.)
     find_label_index = np.where(prediction > threshold)
     time_index = find_label_index[0]
     predicted_label = find_label_index[1]
