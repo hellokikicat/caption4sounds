@@ -24,7 +24,8 @@ var cap4snd = function() {
 	}
 
 	c4s.injectCaptionDiv = function() {
-		var caption_div_html = "<span class=\"audio-caption\" style=\"font-size: 16px\">[dogs barking]</span>";
+		// var caption_div_html = "<span class=\"audio-caption\" style=\"font-size: 16px\">[dogs barking]</span>";
+		var caption_div_html = "<span class=\"audio-caption\" >[dogs barking]</span>";
 		// control_bar = document.getElementsByClassName("ytp-chrome-controls")[0];
 		playerDiv = document.getElementsByClassName("html5-video-player")[0];
 
@@ -33,9 +34,14 @@ var cap4snd = function() {
 		// caption_div.setAttribute("data-layer", "4");
 		// caption_div.setAttribute("class", "caption-window");
 		caption_div.style.float = 'center';
-		caption_div.style['margin-top'] = '2px';
+		caption_div.style['margin-top'] = '5px';
+		caption_div.style['margin-left'] = '5px';
 		caption_div.style['position'] = 'absolute';
 		caption_div.style['z-index'] = '38';
+		caption_div.style['font-size'] = '22px';
+		caption_div.style['background-color'] = 'rgba(8, 8, 8, 0.5)';
+		caption_div.style['border-radius'] = '5px';
+		caption_div.style['text-shadow'] = '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000';
 
 		var child = document.getElementsByClassName('ytp-chrome-bottom')[0];
 
@@ -55,7 +61,7 @@ var cap4snd = function() {
 		// transcript = JSON.parse('{"0": "", "2": "abc", "5.3": "dog barking", "10.1": "cat purring"}');
 		
 		captionAt = function(time) {
-			idx = Object.keys(transcript).reverse().find(function(x){return Number(x)*2<=time})
+			idx = Object.keys(transcript).reverse().find(function(x){return Number(x)*2+2<=time})
 			return transcript[idx]
 		}
 		
