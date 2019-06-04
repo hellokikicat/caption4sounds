@@ -67,7 +67,7 @@ def feature_extraction(songwave, pca_params, session, sample_rate):
     return postprocessed_batch
 
 
-def block(vggish_features, window, hop):
+def block(vggish_features, window, repeat, hop):
     """ Expanding a 2D array to 3D blocks by rolling window of extracted features
 
     Args:
@@ -77,9 +77,9 @@ def block(vggish_features, window, hop):
     Returns:
         a 3D numpy array of overlapping blocks of the original 2D array
     """
-    index_window = np.arange(window)
+    index_window = np.tile(np.arange(window), repeat)
     # index_hop = np.arange(0,vggish_features.shape[0] - hop - (10 - vggish_features.shape[0]%window) - 1, hop)[:, np.newaxis]
-    index_hop = np.arange(0,vggish_features.shape[0] - window, hop)[:, np.newaxis]
+    index_hop = np.arange(0,vggish_features.shape[0] - window + 1, hop)[:, np.newaxis]
     rolling_block = np.take(vggish_features,index_window + index_hop, axis=0)
     return rolling_block
 
