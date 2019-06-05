@@ -33,9 +33,9 @@ def get_caption(video_id: str):
     vggish_features = prediction_utils.feature_extraction(wave, 'models/vggish_pca_params.npz', sess_ckpt, sr)
     print('hopping')
     print(vggish_features.shape)
-    block_10s = prediction_utils.block(vggish_features,2,5,2)
+    block_10s = prediction_utils.block(vggish_features,5,2,2)
     
-    prediction = prediction_utils.model_prediction(model_attention, block_10s,0.2)
+    prediction = prediction_utils.model_prediction(model_attention, block_10s, 0.2)
     print('labeling')
     labels = prediction_utils.prediction_label('./','class_labels_indices.csv','display_name',prediction)
     print('done')
