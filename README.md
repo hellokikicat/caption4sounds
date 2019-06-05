@@ -17,6 +17,9 @@ Here, Google's [VGGish](https://ai.google/research/pubs/pub45611) model is used 
 
 To provide a non-intrusive way of interacting with users, a Chrome extension is provided that has the ability to directly overlay captions on top of vidoes right on YouTube's website. The extension takes care of everything: once the extension icon is clicked, it automotically sends the video ID to the prediction server and pulls the resulting caption transcript back to user's browser.
 
+**Quick demo video of how it looks like:**\
+[![YouTube Demo Video](https://img.youtube.com/vi/WR96fruymRU/0.jpg)](https://www.youtube.com/watch?v=WR96fruymRU?t=1)
+
 To view installation detials, please take a look at the readme in the [chrome_extension subfolder](https://github.com/hellokikicat/caption4sounds/tree/master/chrome_extension).
 
 ![alt text](https://github.com/hellokikicat/caption4sounds/blob/master/.archived/pipeline.png?raw=true)
