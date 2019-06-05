@@ -61,7 +61,7 @@ var cap4snd = function() {
 		// transcript = JSON.parse('{"0": "", "2": "abc", "5.3": "dog barking", "10.1": "cat purring"}');
 		
 		captionAt = function(time) {
-			idx = Object.keys(transcript).reverse().find(function(x){return Number(x)*2+2<=time})
+			idx = Object.keys(transcript).reverse().find(function(x){return Number(x)*2-1<=time})
 			return transcript[idx]
 		}
 		
