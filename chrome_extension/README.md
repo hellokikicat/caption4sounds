@@ -2,7 +2,7 @@
 
 The front-end of Caption4sounds as a Chrome extension.
 
-![screenshot_01](https://github.com/hellokikicat/caption4sounds/blob/master/.archived/screenshot_01.png?raw=true)
+![screenshot_01](https://github.com/hellokikicat/caption4sounds/blob/master/.archived/Annotation%202019-06-07%20003332.png?raw=true)
 
 ## Installation
 1. Download folder `caption4sounds` in this folder
