@@ -1,10 +1,10 @@
-# Caption4sound
+# Caption4Sound
 
 An accessibility tool that aims to help hearing impaired people to fully enjoy YouTube videos by providing them with captions that describe the audio track.
 
 ![alt text](https://github.com/hellokikicat/caption4sounds/blob/master/chrome_extension/caption4sounds/waveform-icon.png?raw=true)
 
-Empowered by a Sound Event Recognition (SER) model, Caption4sound classifies audios into 500+ categories of real-life events according to Google's [AudioSet Ontology](https://research.google.com/audioset/ontology/index.html).
+Empowered by a Sound Event Recognition (SER) model, Caption4Sound classifies audios into 500+ categories of real-life events according to Google's [AudioSet Ontology](https://research.google.com/audioset/ontology/index.html).
 
 The model transforms the underlying multi-label sound recognition problem to a image recognition problem by converting sound waveforms to spectrograms using Short Time Fourier Transform (STFT). This way, any convolutional model such as VGG and ResNet can be directly used.
 
