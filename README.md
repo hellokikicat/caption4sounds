@@ -22,7 +22,7 @@ To provide a non-intrusive way of interacting with users, a Chrome extension is 
 
 To view installation detials, please take a look at the readme in the [chrome_extension subfolder](https://github.com/hellokikicat/caption4sounds/tree/master/chrome_extension).
 
-![alt text](https://github.com/hellokikicat/caption4sounds/blob/master/.archived/pipeline.png?raw=true)
+![alt text](https://github.com/hellokikicat/caption4sounds/blob/master/.archived/Annotation%202019-06-07%20013558.png?raw=true)
 
 ## Model Performance
 
