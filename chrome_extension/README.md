@@ -1,11 +1,11 @@
-# Caption4sounds Chrome Extension
+# Caption4sound Chrome Extension
 
 The front-end of Caption4sounds as a Chrome extension.
 
 ![screenshot_01](https://github.com/hellokikicat/caption4sounds/blob/master/.archived/screenshot_01.png?raw=true)
 
 ## Installation
-1. Download folder caption4sounds in this folder
+1. Download folder `caption4sounds` in this folder
 1. Go to "chrome://extensions/" in your browser
 1. Turn on "Developer Mode"
 1. Click on "Load Unpacked" and select the downloaded "caption4sounds" folder
