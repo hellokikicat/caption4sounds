@@ -1,16 +1,18 @@
 """ Definition for API endpoints"""
 
 import json
-import prediction_utils
 from fastapi import FastAPI
 from ytdl import yt_audio_dl
+import tensorflow as tf
+from tensorflow.keras import layers
+import prediction_utils
 
 # initializing fastapi
 app = FastAPI()
+classifier = prediction_utils.construct_classifier('models/deployed_weights.h5')
 
 # loading vggish
 sess_ckpt = prediction_utils.load_checkpoint('models/vggish_model.ckpt')
-classifier = prediction_utils.load_classifier('models/attn_feat_02_layers-2-stage_02-after_060000batches.h5')
 
 @app.get("/")
 def read_root():
@@ -26,6 +28,8 @@ def get_caption(video_id: str):
     Returns:
         dict containing audio file name, download status, and predicted caption transcript
     """
+    classifier = prediction_utils.load_classifier('models/attn_feat_02_layers-2-stage_02-after_060000batches.h5')
+   
     filename, status = yt_audio_dl(video_id, 'temp_audio/')
     print('loading audio file')
     wave, sr  = prediction_utils.audio_load(filename)

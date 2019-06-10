@@ -5,6 +5,9 @@ Utility functions for audio loading, model loading, and making predictions
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+# from tensorflow.keras import layers
+# classifier = tf.keras.models.load_model('models/attn_feat_02_layers-2-stage_02-after_060000batches.h5')
+
 import vggish.vggish_input
 import vggish.vggish_params
 import vggish.vggish_postprocess
@@ -12,10 +15,9 @@ import vggish.vggish_slim
 from pydub import AudioSegment
 from pathlib import Path
 
-import tensorflow.keras.backend as K
-from tensorflow.keras import layers
-from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.optimizers import Adam
+# import tensorflow.keras.backend as K
+# from tensorflow.keras.models import Model, Sequential
+# from tensorflow.keras.optimizers import Adam
 # import tensorflow.keras as keras
 # from tensorflow.keras.models import Model
 # from tensorflow.keras.layers import (Input, Dense, BatchNormalization, Dropout, Lambda,
@@ -50,6 +52,60 @@ def load_checkpoint(checkpointfile):
     vggish.vggish_slim.define_vggish_slim(training=False)
     vggish.vggish_slim.load_vggish_slim_checkpoint(sess, checkpointfile)
     return sess
+
+
+def construct_classifier(model_path):
+    import tensorflow as tf
+    import tensorflow.keras.backend as K
+    from tensorflow.keras import layers
+    from tensorflow.keras.models import Model, Sequential
+
+    num_time_steps = 10  # vggish
+    emb_size = 128  # vggish
+    num_labels = 527  # audioset
+
+    hidden_layer_sizes = [1024, 1024, 1024]
+    dropout_rate = 0.5
+
+    in_out_sizes = list(zip([emb_size] + hidden_layer_sizes[:-1], hidden_layer_sizes))
+    in_out_sizes
+
+    def attn_layers(layer_size=hidden_layer_sizes[-1]):
+        def attn_pool(inputs):
+    #         inputs = layers.Input(shape = input_shape)
+            feats = layers.Dense(layer_size, activation='linear')(inputs)
+            attentions = layers.Dense(layer_size, activation='sigmoid')(inputs)
+            attentions = layers.Lambda(lambda x: K.clip(x, 1e-9, 1-1e-9))(attentions)
+            attentions = attentions / K.sum(attentions, axis=1, keepdims=True)
+
+            outputs = K.sum(feats * attentions, axis = 1)
+            return outputs
+
+        return [layers.Lambda(attn_pool)]
+
+
+    transform_layers = [layers.Lambda(lambda x: K.cast(x, 'float32')/128. - 1., input_shape=(num_time_steps, emb_size))]
+
+    linear_layers = []
+    for i,o in in_out_sizes:
+        linear_layers += [
+            layers.Dense(o, input_shape=(num_time_steps, i)),
+            layers.BatchNormalization(),
+            layers.Activation('relu'),
+            layers.Dropout(rate=dropout_rate),
+        ]
+
+    final_layers = [
+        layers.BatchNormalization(),
+        layers.Activation('relu'),
+        layers.Dense(num_labels, activation='sigmoid'),
+    ]
+
+    model = Sequential(transform_layers + linear_layers + attn_layers(1024) + final_layers)
+    model.summary()
+    model.load_weights(weights_path)
+    # classifier = tf.keras.models.load_model(model_path)
+    return model
 
 def load_classifier(model_path):
     """ Load classifier layers
