@@ -12,6 +12,10 @@ import vggish.vggish_slim
 from pydub import AudioSegment
 from pathlib import Path
 
+import tensorflow.keras.backend as K
+from tensorflow.keras import layers
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.optimizers import Adam
 # import tensorflow.keras as keras
 # from tensorflow.keras.models import Model
 # from tensorflow.keras.layers import (Input, Dense, BatchNormalization, Dropout, Lambda,
