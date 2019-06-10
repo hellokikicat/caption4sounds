@@ -10,6 +10,7 @@ app = FastAPI()
 
 # loading vggish
 sess_ckpt = prediction_utils.load_checkpoint('models/vggish_model.ckpt')
+classifier = prediction_utils.load_classifier('models/attn_feat_02_layers-2-stage_02-after_060000batches.h5')
 
 @app.get("/")
 def read_root():
@@ -25,7 +26,6 @@ def get_caption(video_id: str):
     Returns:
         dict containing audio file name, download status, and predicted caption transcript
     """
-    model_attention = prediction_utils.constrct_model('models/','final_weights.h5')
     filename, status = yt_audio_dl(video_id, 'temp_audio/')
     print('loading audio file')
     wave, sr  = prediction_utils.audio_load(filename)
@@ -33,9 +33,9 @@ def get_caption(video_id: str):
     vggish_features = prediction_utils.feature_extraction(wave, 'models/vggish_pca_params.npz', sess_ckpt, sr)
     print('hopping')
     print(vggish_features.shape)
-    block_10s = prediction_utils.block(vggish_features,5,2,2)
+    block_10s = prediction_utils.to_blocks(vggish_features,5,2,2)
     
-    prediction = prediction_utils.model_prediction(model_attention, block_10s, 0.2)
+    prediction = prediction_utils.classify(classifier, block_10s, 0.2)
     print('labeling')
     labels = prediction_utils.prediction_label('./','class_labels_indices.csv','display_name',prediction)
     print('done')

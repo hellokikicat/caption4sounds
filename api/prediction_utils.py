@@ -12,11 +12,11 @@ import vggish.vggish_slim
 from pydub import AudioSegment
 from pathlib import Path
 
-import tensorflow.keras as keras
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import (Input, Dense, BatchNormalization, Dropout, Lambda,
-                          Activation, Concatenate)
-import tensorflow.keras.backend as K
+# import tensorflow.keras as keras
+# from tensorflow.keras.models import Model
+# from tensorflow.keras.layers import (Input, Dense, BatchNormalization, Dropout, Lambda,
+                          # Activation, Concatenate)
+# import tensorflow.keras.backend as K
 
 
 def audio_load(filename):
@@ -47,6 +47,13 @@ def load_checkpoint(checkpointfile):
     vggish.vggish_slim.load_vggish_slim_checkpoint(sess, checkpointfile)
     return sess
 
+def load_classifier(model_path):
+    """ Load classifier layers
+    Args:
+        model_path: path to keras model
+    """
+    return tf.keras.models.load_model(model_path)
+
 def feature_extraction(songwave, pca_params, session, sample_rate):
     """ Applying VGGish to extract features and do post processing (PCA and discretization)
 
@@ -67,7 +74,7 @@ def feature_extraction(songwave, pca_params, session, sample_rate):
     return postprocessed_batch
 
 
-def block(vggish_features, window, repeat, hop):
+def to_blocks(vggish_features, window, repeat, hop):
     """ Expanding a 2D array to 3D blocks by rolling window of extracted features
 
     Args:
@@ -159,7 +166,7 @@ def constrct_model(pathname, weights_name):
     return model_graph
 
 
-def model_prediction(model, block_10s, threshold=0.2):
+def classify(model, block_10s, threshold=0.2):
     """ Forward pass of the second part of the layer, predicting probs for each label
 
     Args:
@@ -172,7 +179,7 @@ def model_prediction(model, block_10s, threshold=0.2):
         2D numpy array of shape ((window/hop) * num of seconds, num of labels) where
         each element is the probability of the corresponding label at corresponding time
     """
-    prediction = model.predict((np.float32(block_10s)-128.)/128.)
+    prediction = model.predict(block_10s)
     find_label_index = np.where(prediction > threshold)
     time_index = find_label_index[0]
     predicted_label = find_label_index[1]
