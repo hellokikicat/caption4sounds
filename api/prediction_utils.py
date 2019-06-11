@@ -5,24 +5,12 @@ Utility functions for audio loading, model loading, and making predictions
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+
 # from tensorflow.keras import layers
 # classifier = tf.keras.models.load_model('models/attn_feat_02_layers-2-stage_02-after_060000batches.h5')
 
-import vggish.vggish_input
-import vggish.vggish_params
-import vggish.vggish_postprocess
-import vggish.vggish_slim
 from pydub import AudioSegment
 from pathlib import Path
-
-# import tensorflow.keras.backend as K
-# from tensorflow.keras.models import Model, Sequential
-# from tensorflow.keras.optimizers import Adam
-# import tensorflow.keras as keras
-# from tensorflow.keras.models import Model
-# from tensorflow.keras.layers import (Input, Dense, BatchNormalization, Dropout, Lambda,
-                          # Activation, Concatenate)
-# import tensorflow.keras.backend as K
 
 
 def audio_load(filename):
@@ -35,8 +23,12 @@ def audio_load(filename):
         a 2-tuple: (numpy array of waveform, native sample rate of the audio)
     """
     song = AudioSegment.from_file(Path(filename))
-    songwave = np.array(song.get_array_of_samples()).reshape(-1, song.channels)/ song.max_possible_amplitude
+    songwave = (
+        np.array(song.get_array_of_samples()).reshape(-1, song.channels)
+        / song.max_possible_amplitude
+    )
     return songwave, song.frame_rate
+
 
 def load_checkpoint(checkpointfile):
     """ Load checkpoint file for vggish
@@ -46,6 +38,8 @@ def load_checkpoint(checkpointfile):
     Returns:
         a TF session containing restored weights of vggish
     """
+    import vggish.vggish_slim
+
     # tf.reset_default_graph()
     tf.Graph().as_default()
     sess = tf.Session()
@@ -72,40 +66,47 @@ def construct_classifier(model_path):
 
     def attn_layers(layer_size=hidden_layer_sizes[-1]):
         def attn_pool(inputs):
-    #         inputs = layers.Input(shape = input_shape)
-            feats = layers.Dense(layer_size, activation='linear')(inputs)
-            attentions = layers.Dense(layer_size, activation='sigmoid')(inputs)
-            attentions = layers.Lambda(lambda x: K.clip(x, 1e-9, 1-1e-9))(attentions)
+            #         inputs = layers.Input(shape = input_shape)
+            feats = layers.Dense(layer_size, activation="linear")(inputs)
+            attentions = layers.Dense(layer_size, activation="sigmoid")(inputs)
+            attentions = layers.Lambda(lambda x: K.clip(x, 1e-9, 1 - 1e-9))(attentions)
             attentions = attentions / K.sum(attentions, axis=1, keepdims=True)
 
-            outputs = K.sum(feats * attentions, axis = 1)
+            outputs = K.sum(feats * attentions, axis=1)
             return outputs
 
         return [layers.Lambda(attn_pool)]
 
-
-    transform_layers = [layers.Lambda(lambda x: K.cast(x, 'float32')/128. - 1., input_shape=(num_time_steps, emb_size))]
+    transform_layers = [
+        layers.Lambda(
+            lambda x: K.cast(x, "float32") / 128.0 - 1.0,
+            input_shape=(num_time_steps, emb_size),
+        )
+    ]
 
     linear_layers = []
-    for i,o in in_out_sizes:
+    for i, o in in_out_sizes:
         linear_layers += [
             layers.Dense(o, input_shape=(num_time_steps, i)),
             layers.BatchNormalization(),
-            layers.Activation('relu'),
+            layers.Activation("relu"),
             layers.Dropout(rate=dropout_rate),
         ]
 
     final_layers = [
         layers.BatchNormalization(),
-        layers.Activation('relu'),
-        layers.Dense(num_labels, activation='sigmoid'),
+        layers.Activation("relu"),
+        layers.Dense(num_labels, activation="sigmoid"),
     ]
 
-    model = Sequential(transform_layers + linear_layers + attn_layers(1024) + final_layers)
+    model = Sequential(
+        transform_layers + linear_layers + attn_layers(1024) + final_layers
+    )
     model.summary()
     model.load_weights(weights_path)
     # classifier = tf.keras.models.load_model(model_path)
     return model
+
 
 def load_classifier(model_path):
     """ Load classifier layers
@@ -113,6 +114,7 @@ def load_classifier(model_path):
         model_path: path to keras model
     """
     return tf.keras.models.load_model(model_path)
+
 
 def feature_extraction(songwave, pca_params, session, sample_rate):
     """ Applying VGGish to extract features and do post processing (PCA and discretization)
@@ -125,11 +127,22 @@ def feature_extraction(songwave, pca_params, session, sample_rate):
     Returns:
         feature embedding in numpy array of shape (number of seconds of audio, 128)
     """
+    import vggish.vggish_input
+    import vggish.vggish_params
+    import vggish.vggish_postprocess
+    import vggish.vggish_slim
+
     examples_batch = vggish.vggish_input.waveform_to_examples(songwave, sample_rate)
     pproc = vggish.vggish_postprocess.Postprocessor(str(pca_params))
-    features_tensor = session.graph.get_tensor_by_name(vggish.vggish_params.INPUT_TENSOR_NAME)
-    embedding_tensor = session.graph.get_tensor_by_name(vggish.vggish_params.OUTPUT_TENSOR_NAME)
-    [embedding_batch] = session.run([embedding_tensor],feed_dict={features_tensor: examples_batch})
+    features_tensor = session.graph.get_tensor_by_name(
+        vggish.vggish_params.INPUT_TENSOR_NAME
+    )
+    embedding_tensor = session.graph.get_tensor_by_name(
+        vggish.vggish_params.OUTPUT_TENSOR_NAME
+    )
+    [embedding_batch] = session.run(
+        [embedding_tensor], feed_dict={features_tensor: examples_batch}
+    )
     postprocessed_batch = pproc.postprocess(embedding_batch)
     return postprocessed_batch
 
@@ -146,84 +159,9 @@ def to_blocks(vggish_features, window, repeat, hop):
     """
     index_window = np.tile(np.arange(window), repeat)
     # index_hop = np.arange(0,vggish_features.shape[0] - hop - (10 - vggish_features.shape[0]%window) - 1, hop)[:, np.newaxis]
-    index_hop = np.arange(0,vggish_features.shape[0] - window + 1, hop)[:, np.newaxis]
-    rolling_block = np.take(vggish_features,index_window + index_hop, axis=0)
+    index_hop = np.arange(0, vggish_features.shape[0] - window + 1, hop)[:, np.newaxis]
+    rolling_block = np.take(vggish_features, index_window + index_hop, axis=0)
     return rolling_block
-
-def constrct_model(pathname, weights_name):
-    """ Model loading function for last layers, contains attention pooling
-    
-    Args:
-        pathname: folder name of saved weights
-        weights_name: file name of saved weights
-    Returns:
-        model loaded with saved weights, ready for prediction
-    """
-    def attention_pooling(inputs, **kwargs):
-        [out, att] = inputs
-
-        epsilon = 1e-7
-        att = K.clip(att, epsilon, 1. - epsilon)
-        normalized_att = att / K.sum(att, axis=1)[:, None, :]
-
-        return K.sum(out * normalized_att, axis=1)
-
-
-    def pooling_shape(input_shape):
-
-        if isinstance(input_shape, list):
-            (sample_num, time_steps, freq_bins) = input_shape[0]
-
-        else:
-            (sample_num, time_steps, freq_bins) = input_shape
-
-        return (sample_num, freq_bins)
-
-    time_steps = 10
-    freq_bins = 128
-    classes_num = 527
-
-    # Hyper parameters
-    hidden_units = 1024
-    drop_rate = 0.5
-    batch_size = 500
-
-    # Embedded layers
-    input_layer = Input(shape=(time_steps, freq_bins))
-
-    a1 = Dense(hidden_units)(input_layer)
-    a1 = BatchNormalization()(a1)
-    a1 = Activation('relu')(a1)
-    a1 = Dropout(drop_rate)(a1)
-
-    a2 = Dense(hidden_units)(a1)
-    a2 = BatchNormalization()(a2)
-    a2 = Activation('relu')(a2)
-    a2 = Dropout(drop_rate)(a2)
-
-    a3 = Dense(hidden_units)(a2)
-    a3 = BatchNormalization()(a3)
-    a3 = Activation('relu')(a3)
-    a3 = Dropout(drop_rate)(a3)
-
-    # Multi-level Attention Model
-    cla1 = Dense(classes_num, activation='sigmoid')(a2)
-    att1 = Dense(classes_num, activation='softmax')(a2)
-    out1 = Lambda(
-        attention_pooling, output_shape=pooling_shape)([cla1, att1])
-
-    cla2 = Dense(classes_num, activation='sigmoid')(a3)
-    att2 = Dense(classes_num, activation='softmax')(a3)
-    out2 = Lambda(
-        attention_pooling, output_shape=pooling_shape)([cla2, att2])
-
-    b1 = Concatenate(axis=-1)([out1, out2])
-    b1 = Dense(classes_num)(b1)
-    output_layer = Activation('sigmoid')(b1)
-
-    model_graph = Model(inputs=input_layer, outputs=output_layer)
-    model_graph.load_weights(pathname + weights_name)
-    return model_graph
 
 
 def classify(model, block_10s, threshold=0.2):
@@ -245,11 +183,12 @@ def classify(model, block_10s, threshold=0.2):
     predicted_label = find_label_index[1]
     top_preds = []
     for i in range(block_10s.shape[0]):
-        idx = (i == time_index)
+        idx = i == time_index
         top_preds.append((i, list(predicted_label[idx])))
     return top_preds
 
-def prediction_label(pathname, labels_file, labels_col, preds,):
+
+def prediction_label(pathname, labels_file, labels_col, preds):
     """ Translating numeric labels to text
 
     Args:
@@ -260,7 +199,7 @@ def prediction_label(pathname, labels_file, labels_col, preds,):
     Returns:
         dict of predicted text labels
     """
-    df = pd.read_csv(Path(pathname)/ labels_file)
+    df = pd.read_csv(Path(pathname) / labels_file)
     series = df[labels_col]
     # labels = [(x, list(series[y])) for x, y in preds]
     labels = {x: list(series[y]) for x, y in preds}
